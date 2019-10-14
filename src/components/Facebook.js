@@ -17,14 +17,22 @@ export default class Facebook extends Component {
     }
 
     responseFacebook = async response => {
-        this.setState({
-            isLoggedIn : true,
-            userID : response.userID,
-            name : response.name,
-            email : response.email,
-            picture : response.picture.data.url
-        });
-        console.log('response', response, this.state.isLoggedIn);
+        if(response.status != 'unknown'){
+            window.close();
+            this.setState({
+                isLoggedIn : true,
+                userID : response.userID,
+                name : response.name,
+                email : response.email,
+                picture : response.picture.data.url || undefined
+            });
+            console.log('response', response);
+        }else{
+            this.setState({
+                isLoggedIn: false
+            });
+            console.log('No');
+        }
     }
 
     componentClicked = () => console.log('click');
@@ -45,13 +53,14 @@ export default class Facebook extends Component {
                 <img src={this.state.picture} alt={this.state.name}/>
                     <h1>Welcome {this.state.name}</h1>
                     <h4>Email {this.state.email}</h4>
+                    <a href="#" onClick={(e)=>{e.preventDefault(); window.FB.logout(); this.setState({isLoggedIn:false})}}>logout</a>
                 </div>
             );
         } else {
             fbContent = (
                 <FacebookLogin
                     appId="518654022260624"
-                    autoLoad={true}
+                    autoLoad={false}
                     fields="name,email,picture"
                     onClick={this.componentClicked}
                     callback={this.responseFacebook} />
