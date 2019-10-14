@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { directive } from "@babel/types";
-import FacebookLogin from 'react-facebook-login'
+import FacebookLogin from 'react-facebook-login'; //Component necessary, install by: npm i react-facebook-login
 import { styles } from "ansi-colors";
 
-export default class Facebook extends Component {
+export default class Facebook extends Component { 
     constructor(props){
         super(props)
         this.state = {
@@ -17,19 +17,21 @@ export default class Facebook extends Component {
     }
 
     responseFacebook = async response => {
-        if(response.status != 'unknown'){
-            window.close();
+        // Status may come unknown because the windows is was closed before login.
+        // If the status is diferent to unknown, the data is set in the variables. 
+        if(response.status != 'unknown'){ 
             this.setState({
                 isLoggedIn : true,
                 userID : response.userID,
                 name : response.name,
                 email : response.email,
-                picture : response.picture.data.url || undefined
+                picture : response.picture.data.url
             });
             console.log('response', response);
         }else{
+            // If the status is unknown then not login.
             this.setState({
-                isLoggedIn: false
+                isLoggedIn: false 
             });
             console.log('No');
         }
@@ -38,9 +40,11 @@ export default class Facebook extends Component {
     componentClicked = () => console.log('click');
 
     render() {
-        let fbContent;
+        let fbContent; // Will contain all the render of the buttom
 
+        // If isLoggedIn change the state to true.
         if (this.state.isLoggedIn) {
+            // It will look the information about the person login.
             fbContent = (
                 <div style={{
                     width: '400px',
@@ -50,16 +54,17 @@ export default class Facebook extends Component {
                     padding: '20px',
                     borderRadius: '25px'
                 }}>
-                <img src={this.state.picture} alt={this.state.name}/>
-                    <h1>Welcome {this.state.name}</h1>
-                    <h4>Email {this.state.email}</h4>
-                    <a href="#" onClick={(e)=>{e.preventDefault(); window.FB.logout(); this.setState({isLoggedIn:false})}}>logout</a>
+                <img src={this.state.picture} alt={this.state.name}/> {/* Show the profile picture. */}
+                    <h1>Welcome {this.state.name}</h1>  {/* Show the name. */}
+                    <h4>Email {this.state.email}</h4>   {/* Show the email. */}
+                    <a href="#" onClick={(e)=>{e.preventDefault(); window.FB.logout(); this.setState({isLoggedIn:false})}}>logout</a> {/* Closed the facebook profile.*/}
                 </div>
             );
         } else {
+            // If no, it will look a button to login.
             fbContent = (
                 <FacebookLogin
-                    appId="518654022260624"
+                    appId="518654022260624" // Need the id in the page of Facebook Developer.
                     autoLoad={false}
                     fields="name,email,picture"
                     onClick={this.componentClicked}
@@ -67,6 +72,6 @@ export default class Facebook extends Component {
             );
 
         }
-        return <div>{fbContent}</div>
+        return <div>{fbContent}</div> // Show the content.
     }
 }
